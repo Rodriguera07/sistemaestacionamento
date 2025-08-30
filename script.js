@@ -162,7 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const valor = vehicle.tipo === 'carro' ? 'R$60,00' : 'R$30,00';
             const cupomDiv = document.getElementById('cupom');
             cupomDiv.innerHTML = `
-                <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:123456789</h2>
+                <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97<br>
+                Av.Tomé de Souza, 3489 - JD. Rio da Praia.</h2>
                 <hr>
                 <p><strong>Vaga:</strong> ${spotId}</p>
                 <p><strong>Placa:</strong> ${vehicle.placa}</p>
