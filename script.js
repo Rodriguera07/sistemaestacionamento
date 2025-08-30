@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Entrada:</strong> ${new Date(vehicle.entryTime).toLocaleString('pt-BR')}</p>
                 <p><strong>Valor:</strong> ${valor}</p>
                 <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:center;">
-                    <button type="button" id="btn-reimprimir-cupom" class="btn btn-success">Reimprimir Cupom</button>
+                    <button type="button" id="btn-reimprimir-cupom" class="btn btn-success">Imprimir novamente</button>
                     <button type="button" id="btn-confirm-checkout" class="btn btn-danger">Confirmar Checkout</button>
                     <button type="button" id="btn-cancel-checkout" class="btn btn-secondary">Cancelar</button>
                 </div>
