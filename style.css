@@ -374,6 +374,10 @@ body {
         box-shadow: none !important;
         page-break-inside: avoid !important;
     }
+    #cupom h2 {
+        font-size: 10px !important;
+        font-weight: normal !important;
+    }
     #btn-imprimir-cupom {
         display: none !important;
     }
