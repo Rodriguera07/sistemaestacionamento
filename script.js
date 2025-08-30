@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ParkingApp = {
         // --- Configurações e Estado ---
         config: {
-            totalSpots: 55,
+            totalSpots: 60, // Alterado para 60 vagas
             storageKey: 'erivanParkingState',
         },
         state: {
@@ -188,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const tipoVeiculo = vehicle.tipo === 'carro' ? 'Carro - R$60,00' : 'Moto - R$30,00';
             const valor = vehicle.tipo === 'carro' ? 'R$60,00' : 'R$30,00';
 
-            // Sempre fecha antes de abrir para evitar conflitos
             if (this.nodes.modal.element.open) this.nodes.modal.element.close();
 
             this.nodes.modal.content.innerHTML = `
@@ -198,16 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Modelo:</strong> ${vehicle.modelo}</p>
                 <p><strong>Entrada:</strong> ${new Date(vehicle.entryTime).toLocaleString('pt-BR')}</p>
                 <p><strong>Valor:</strong> ${valor}</p>
-                <div style="margin-top:1rem; display:flex; gap:1rem;">
-                    <button type="button" id="btn-reimprimir-cupom">Reimprimir Cupom</button>
-                    <button type="button" id="btn-confirm-checkout">Confirmar Checkout</button>
-                    <button type="button" id="btn-cancel-checkout">Cancelar</button>
+                <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:center;">
+                    <button type="button" id="btn-reimprimir-cupom" class="btn btn-success">Reimprimir Cupom</button>
+                    <button type="button" id="btn-confirm-checkout" class="btn btn-danger">Confirmar Checkout</button>
+                    <button type="button" id="btn-cancel-checkout" class="btn btn-secondary">Cancelar</button>
                 </div>
             `;
 
             this.nodes.modal.element.showModal();
 
-            // Eventos dos botões SEMPRE após criar conteúdo
             document.getElementById('btn-reimprimir-cupom').onclick = () => {
                 this.generateCupom(vehicle, spotId);
                 document.getElementById('cupom-area').style.display = 'block';
@@ -273,13 +271,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Total do caixa:</strong> R$ ${total.toFixed(2)}</p>
                 <hr>
                 <p style="color:#dc3545; font-weight:bold;">
-                    Atenção: Ao confirmar, todo o histórico e fluxo de caixa serão zerados.<br>
+                    Atenção: Ao confirmar, todo o histórico, fluxo de caixa e vagas ocupadas serão zerados.<br>
                     Deseja realmente começar um novo dia?
                 </p>
-                <div style="margin-top:1rem; display:flex; gap:1rem; justify-content:center;">
-                    <button id="btn-imprimir-resumo-dia" type="button">Imprimir Resumo</button>
-                    <button id="btn-confirm-novo-dia" type="button">Confirmar</button>
-                    <button id="btn-cancel-novo-dia" type="button">Cancelar</button>
+                <div style="margin-top:1.5rem; display:flex; gap:1rem; justify-content:center;">
+                    <button id="btn-imprimir-resumo-dia" type="button" class="btn btn-success">Imprimir Resumo</button>
+                    <button id="btn-confirm-novo-dia" type="button" class="btn btn-danger">Confirmar Novo Dia</button>
+                    <button id="btn-cancel-novo-dia" type="button" class="btn btn-secondary">Cancelar</button>
                 </div>
             `;
 
@@ -288,14 +286,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Botão para imprimir o resumo
             document.getElementById('btn-imprimir-resumo-dia').onclick = () => {
-                // Abre janela temporária para impressão do resumo
                 const printWindow = window.open('', '', 'width=400,height=600');
                 printWindow.document.write(`
                     <html>
                     <head>
                         <title>Resumo do Dia</title>
                         <style>
-                            body { font-family: Arial, sans-serif; padding: 2rem; text-align: center; }
+                            body { font-family: 'Courier New', Courier, monospace; padding: 2rem; text-align: center; }
                             h2 { color: #dc3545; }
                             p { font-size: 1.1rem; margin: 0.7rem 0; }
                         </style>
@@ -315,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Botão para confirmar e zerar tudo
             document.getElementById('btn-confirm-novo-dia').onclick = () => {
-                // Zera todos os dados do dia
+                // Zera todos os dados do dia e vagas ocupadas
                 this.state.spots.forEach(spot => {
                     spot.status = 'available';
                     spot.vehicle = null;
@@ -324,10 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.state.totalCarrosDia = 0;
                 this.state.totalMotosDia = 0;
                 this.state.spotToCheckout = null;
+                this.render();
                 novoDiaModal.close();
-
-                // Atualiza toda a página, limpando tudo
-                location.reload();
             };
 
             // Botão para cancelar
@@ -339,6 +334,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedState = localStorage.getItem(this.config.storageKey);
             if (savedState) {
                 this.state.spots = JSON.parse(savedState);
+                // Garante que sempre existam 60 vagas
+                if (this.state.spots.length < this.config.totalSpots) {
+                    for (let i = this.state.spots.length + 1; i <= this.config.totalSpots; i++) {
+                        this.state.spots.push({
+                            id: `${i}`,
+                            status: 'available',
+                            vehicle: null
+                        });
+                    }
+                }
             } else {
                 // Cria o estado inicial se não houver nada salvo
                 this.state.spots = Array.from({ length: this.config.totalSpots }, (_, i) => ({
