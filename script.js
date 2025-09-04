@@ -153,18 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const valor = vehicle.tipo === 'carro' ? 'R$60,00' : 'R$30,00';
             const cupomDiv = document.getElementById('cupom');
             cupomDiv.innerHTML = `
-                <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97<br>
-                Av.Tomé de Souza, 3489 - JD. Rio da Praia.</h2>
+                <h2>ERIVAN ESTACIONAMENTO</h2>
                 <hr>
-                <p><strong>Vaga:</strong> ${spotId}</p>
                 <p><strong>Placa:</strong> ${vehicle.placa}</p>
                 <p><strong>Tipo:</strong> ${tipoVeiculo}</p>
                 <p><strong>Modelo:</strong> ${vehicle.modelo}</p>
                 <p><strong>Entrada:</strong> ${new Date(vehicle.entryTime).toLocaleString('pt-BR')}</p>
                 <p><strong>Valor:</strong> ${valor}</p>
                 <hr>
-                <p>Bem-vindo! Guarde este cupom.<br>Horário de funcionamento 8h as 18h!
-                
+                <div class="cupom-footer">Obrigado por escolher nosso estacionamento!</div>
             `;
         },
 
@@ -375,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataEntrada = new Date().toLocaleString('pt-BR');
         const cupomDiv = document.getElementById('cupom');
         cupomDiv.innerHTML = `
-            <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97<br></h2>
+            <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97</h2>
             <hr>
             <p><strong>Placa:</strong> ${placa}</p>
             <p><strong>Tipo:</strong> ${tipo === 'carro' ? 'Carro' : 'Moto'}</p>
@@ -383,11 +380,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><strong>Entrada:</strong> ${dataEntrada}</p>
             <p><strong>Valor:</strong> ${valor}</p>
             <hr>
-            <p>Obrigado por escolher nosso estacionamento!</p>
+            <div class="cupom-footer">Obrigado por escolher nosso estacionamento!</div>
         `;
 
         // Exibe área do cupom e botão de imprimir
-        document.getElementById('cupom-area').style.display = 'block';
+        document.getElementById('cupom-area').style.display = 'flex';
         document.getElementById('btn-imprimir-cupom').style.display = 'inline-block';
 
         // Opcional: Limpa o formulário

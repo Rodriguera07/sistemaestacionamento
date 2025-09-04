@@ -305,25 +305,41 @@ body {
 }
 #btn-cancel-checkout:hover { background-color: #e1e1e1; }
 
-/* Botão de imprimir cupom */
+/* Botão de imprimir cupom: tamanho padrão, bem visível e centralizado */
 #btn-imprimir-cupom {
-    margin: 1rem auto 0 auto;
-    display: block;
-    background: var(--color-success);
-    color: #fff;
+    font-family: 'Segoe UI', Arial, Roboto, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
     border: none;
     border-radius: 6px;
-    padding: 0.7rem 2rem;
-    font-size: 1rem;
-    font-weight: bold;
     cursor: pointer;
+    background-color: #198754;
+    color: #fff;
     transition: background 0.2s;
-}
-#btn-imprimir-cupom:hover {
-    background: #157347;
+    text-align: center;
+    margin: 1rem auto 0.5rem auto;
+    display: block;
+    min-width: 140px;
+    max-width: 220px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    letter-spacing: 0.5px;
 }
 
-/* Cupom visual - formato para impressora térmica POS-80, fonte Arial */
+#btn-imprimir-cupom:hover {
+    background-color: #157347;
+}
+
+/* Garante que o botão fique abaixo do cupom e centralizado */
+#cupom-area {
+    width: 100%;
+    margin: 1.2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Cupom visual - texto em negrito, cor preta, fonte e tamanho padrão de impressora térmica de supermercado */
 #cupom {
     width: 80mm;
     margin: 0 auto;
@@ -333,10 +349,29 @@ body {
     padding: 10px 0;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    color: #222;
-    line-height: 1.4;
+    font-size: 15px;
+    color: #000;
+    line-height: 1.5;
     letter-spacing: 0.5px;
+    font-weight: bold;
+}
+
+#cupom h2,
+#cupom p,
+#cupom .cupom-footer {
+    font-weight: bold;
+    color: #000;
+    text-align: center;
+    margin: 0.3rem 0;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+#cupom hr {
+    width: 90%;
+    border: none;
+    border-top: 2px dashed #000;
+    margin: 0.7rem 0;
 }
 
 /* Impressão: só o cupom aparece, centralizado e otimizado para POS-80 */
@@ -365,18 +400,27 @@ body {
         padding: 0 !important;
         background: #fff !important;
         font-family: Arial, Helvetica, sans-serif !important;
-        font-size: 14px !important;
-        color: #222 !important;
+        font-size: 15px !important;
+        color: #000 !important;
         text-align: center !important;
-        line-height: 1.4 !important;
+        line-height: 1.5 !important;
         letter-spacing: 0.5px !important;
+        font-weight: bold !important;
         border: none !important;
         box-shadow: none !important;
         page-break-inside: avoid !important;
     }
-    #cupom h2 {
-        font-size: 10px !important;
-        font-weight: normal !important;
+    #cupom h2,
+    #cupom p,
+    #cupom .cupom-footer {
+        font-weight: bold !important;
+        color: #000 !important;
+        font-size: 15px !important;
+        text-align: center !important;
+        letter-spacing: 0.5px !important;
+    }
+    #cupom hr {
+        border-top: 2px dashed #000 !important;
     }
     #btn-imprimir-cupom {
         display: none !important;
