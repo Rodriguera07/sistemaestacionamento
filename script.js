@@ -35,14 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnImprimir.onclick = () => window.print();
             }
 
-            // Botão gerar cupom fiscal
-            const btnGerarCupom = document.getElementById('btn-gerar-cupom');
-            if (btnGerarCupom) {
-                btnGerarCupom.onclick = () => {
-                    btnGerarCupom.style.display = 'none';
-                    document.getElementById('btn-imprimir-cupom').style.display = 'block';
-                };
-            }
+            
 
             const btnFecharDia = document.getElementById('btn-fechar-dia');
             if (btnFecharDia) {
@@ -138,13 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this.nodes.form.reset();
             this.render();
 
-            // Exibe área do cupom e botão de gerar cupom fiscal
+            // Exibe área do cupom e botão de imprimir cupom
             const cupomArea = document.getElementById('cupom-area');
-            const btnGerarCupom = document.getElementById('btn-gerar-cupom');
             const btnImprimirCupom = document.getElementById('btn-imprimir-cupom');
             cupomArea.style.display = 'block';
-            btnGerarCupom.style.display = 'block';
-            btnImprimirCupom.style.display = 'none';
+            btnImprimirCupom.style.display = 'block';
 
             // Gera cupom fiscal (apenas visual, impressão só após clicar)
             this.generateCupom(vehicle, availableSpot.id);
@@ -172,8 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Entrada:</strong> ${new Date(vehicle.entryTime).toLocaleString('pt-BR')}</p>
                 <p><strong>Valor:</strong> ${valor}</p>
                 <hr>
-                <p>Bem-vindo! Guarde este cupom.<br>Horário de funcionamento 8h as 18h!<br>proibido saida
-                do veiculo dentro do periodo estacionado, exceto em caso de emergencia.<br>Não trabalhamos por Hora</p>
+                <p>Bem-vindo! Guarde este cupom.<br>Horário de funcionamento 8h as 18h!
+                
             `;
         },
 
@@ -210,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btn-reimprimir-cupom').onclick = () => {
                 this.generateCupom(vehicle, spotId);
                 document.getElementById('cupom-area').style.display = 'block';
-                document.getElementById('btn-gerar-cupom').style.display = 'none';
                 document.getElementById('btn-imprimir-cupom').style.display = 'block';
                 this.nodes.modal.element.close();
             };
@@ -371,4 +361,41 @@ document.addEventListener('DOMContentLoaded', () => {
             <option value="moto">Moto - R$30,00</option>
         `;
     }
+
+    document.getElementById('entry-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Coleta os dados do formulário
+        const placa = document.getElementById('placa').value.trim().toUpperCase();
+        const tipo = document.getElementById('tipo').value;
+        const modelo = document.getElementById('modelo').value.trim();
+
+        // Gera o cupom
+        const valor = tipo === 'carro' ? 'R$60,00' : 'R$30,00';
+        const dataEntrada = new Date().toLocaleString('pt-BR');
+        const cupomDiv = document.getElementById('cupom');
+        cupomDiv.innerHTML = `
+            <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97<br></h2>
+            <hr>
+            <p><strong>Placa:</strong> ${placa}</p>
+            <p><strong>Tipo:</strong> ${tipo === 'carro' ? 'Carro' : 'Moto'}</p>
+            <p><strong>Modelo:</strong> ${modelo}</p>
+            <p><strong>Entrada:</strong> ${dataEntrada}</p>
+            <p><strong>Valor:</strong> ${valor}</p>
+            <hr>
+            <p>Obrigado por escolher nosso estacionamento!</p>
+        `;
+
+        // Exibe área do cupom e botão de imprimir
+        document.getElementById('cupom-area').style.display = 'block';
+        document.getElementById('btn-imprimir-cupom').style.display = 'inline-block';
+
+        // Opcional: Limpa o formulário
+        this.reset();
+    });
+
+    // Imprime o cupom ao clicar no botão
+    document.getElementById('btn-imprimir-cupom').addEventListener('click', function() {
+        window.print();
+    });
 });
