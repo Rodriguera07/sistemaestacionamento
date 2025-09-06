@@ -1,16 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+    function getTipoVeiculoLabel(tipo) {
+        if (tipo === 'carro') return 'Carro';
+        if (tipo === 'moto') return 'Moto';
+        return tipo;
+    }
+
     const ParkingApp = {
         // --- Configurações e Estado ---
         config: {
-            totalSpots: 60, // Alterado para 60 vagas
+            totalSpots: 60, // 60 vagas
             storageKey: 'erivanParkingState',
         },
         state: {
             spots: [],
             spotToCheckout: null,
             caixaTotal: 0,
-            totalCarrosDia: 0, // total de carros registrados no dia
-            totalMotosDia: 0   // total de motos registrados no dia
+            totalCarrosDia: 0,
+            totalMotosDia: 0
         },
 
         // --- Seletores de DOM ---
@@ -26,16 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Inicialização ---
         init() {
             this.loadState();
-            this.addEventListeners(); // <-- Adicione esta linha!
             this.render();
+            this.addEventListeners();
 
             // Botão imprimir cupom
             const btnImprimir = document.getElementById('btn-imprimir-cupom');
             if (btnImprimir) {
                 btnImprimir.onclick = () => window.print();
             }
-
-            
 
             const btnFecharDia = document.getElementById('btn-fechar-dia');
             if (btnFecharDia) {
@@ -50,28 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Lógica de Renderização ---
         render() {
-            this.nodes.parkingLot.innerHTML = ''; // Limpa a visualização
+            this.nodes.parkingLot.innerHTML = '';
             this.state.spots.forEach(spot => {
                 const spotElement = this.createSpotElement(spot);
                 this.nodes.parkingLot.appendChild(spotElement);
             });
             this.saveState();
-
-            // Atualiza o fluxo de caixa
             this.updateFluxoCaixa();
         },
 
         updateFluxoCaixa() {
             let totalCarro = 0;
             let totalMoto = 0;
-            // Conta apenas quantidade de carros/motos ocupados
             this.state.spots.forEach(spot => {
                 if (spot.status === 'occupied' && spot.vehicle) {
                     if (spot.vehicle.tipo === 'carro') totalCarro += 1;
                     if (spot.vehicle.tipo === 'moto') totalMoto += 1;
                 }
             });
-            // Mostra o valor total acumulado no dia
             document.getElementById('caixa-carro').textContent = `Carros: ${totalCarro}`;
             document.getElementById('caixa-moto').textContent = `Motos: ${totalMoto}`;
             document.getElementById('caixa-total').textContent = `Total do caixa: R$ ${this.state.caixaTotal.toFixed(2)}`;
@@ -87,8 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 content += `<div class="spot-plate">${spot.vehicle.placa}</div>`;
             }
             el.innerHTML = content;
-            // O evento de clique será tratado por delegação no elemento 'parking-lot'
-
             return el;
         },
 
@@ -96,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addEventListeners() {
             this.nodes.form.addEventListener('submit', this.handleEntry.bind(this));
             this.nodes.parkingLot.addEventListener('click', this.handleSpotClick.bind(this));
-            // Os listeners do modal são adicionados dinamicamente pois o conteúdo é recriado.
         },
 
         handleEntry(e) {
@@ -142,21 +139,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Notificação de check-in
             const notification = document.getElementById('checkin-notification');
-            notification.style.display = 'block';
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 2000); // Notificação some após 2 segundos
+            if (notification) {
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 2000);
+            }
         },
 
         generateCupom(vehicle, spotId) {
-            const tipoVeiculo = vehicle.tipo === 'carro' ? 'Carro - R$60,00' : 'Moto - R$30,00';
             const valor = vehicle.tipo === 'carro' ? 'R$60,00' : 'R$30,00';
             const cupomDiv = document.getElementById('cupom');
             cupomDiv.innerHTML = `
                 <h2>ERIVAN ESTACIONAMENTO</h2>
                 <hr>
                 <p><strong>Placa:</strong> ${vehicle.placa}</p>
-                <p><strong>Tipo:</strong> ${tipoVeiculo}</p>
+                <p><strong>Tipo:</strong> ${getTipoVeiculoLabel(vehicle.tipo)}</p>
                 <p><strong>Modelo:</strong> ${vehicle.modelo}</p>
                 <p><strong>Entrada:</strong> ${new Date(vehicle.entryTime).toLocaleString('pt-BR')}</p>
                 <p><strong>Valor:</strong> ${valor}</p>
@@ -223,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         fecharDia() {
-            // Usa os acumuladores do dia
             const carros = this.state.totalCarrosDia;
             const motos = this.state.totalMotosDia;
             const total = this.state.caixaTotal;
@@ -246,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         novoDia() {
-            // Monta resumo do dia antes de zerar
             const carros = this.state.totalCarrosDia;
             const motos = this.state.totalMotosDia;
             const total = this.state.caixaTotal;
@@ -272,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const novoDiaModal = document.getElementById('novo-dia-modal');
             novoDiaModal.showModal();
 
-            // Botão para imprimir o resumo
             document.getElementById('btn-imprimir-resumo-dia').onclick = () => {
                 const printWindow = window.open('', '', 'width=400,height=600');
                 printWindow.document.write(`
@@ -298,9 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 printWindow.close();
             };
 
-            // Botão para confirmar e zerar tudo
             document.getElementById('btn-confirm-novo-dia').onclick = () => {
-                // Zera todos os dados do dia e vagas ocupadas
                 this.state.spots.forEach(spot => {
                     spot.status = 'available';
                     spot.vehicle = null;
@@ -313,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 novoDiaModal.close();
             };
 
-            // Botão para cancelar
             document.getElementById('btn-cancel-novo-dia').onclick = () => novoDiaModal.close();
         },
 
@@ -322,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedState = localStorage.getItem(this.config.storageKey);
             if (savedState) {
                 this.state.spots = JSON.parse(savedState);
-                // Garante que sempre existam 60 vagas
                 if (this.state.spots.length < this.config.totalSpots) {
                     for (let i = this.state.spots.length + 1; i <= this.config.totalSpots; i++) {
                         this.state.spots.push({
@@ -333,10 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             } else {
-                // Cria o estado inicial se não houver nada salvo
                 this.state.spots = Array.from({ length: this.config.totalSpots }, (_, i) => ({
                     id: `${i + 1}`,
-                    status: 'available', // 'available' ou 'occupied'
+                    status: 'available',
                     vehicle: null,
                 }));
             }
@@ -358,41 +348,4 @@ document.addEventListener('DOMContentLoaded', () => {
             <option value="moto">Moto - R$30,00</option>
         `;
     }
-
-    document.getElementById('entry-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Coleta os dados do formulário
-        const placa = document.getElementById('placa').value.trim().toUpperCase();
-        const tipo = document.getElementById('tipo').value;
-        const modelo = document.getElementById('modelo').value.trim();
-
-        // Gera o cupom
-        const valor = tipo === 'carro' ? 'R$60,00' : 'R$30,00';
-        const dataEntrada = new Date().toLocaleString('pt-BR');
-        const cupomDiv = document.getElementById('cupom');
-        cupomDiv.innerHTML = `
-            <h2>ERIVAN ESTACIONAMENTO<br>CNPJ:18.852.143/0001-97</h2>
-            <hr>
-            <p><strong>Placa:</strong> ${placa}</p>
-            <p><strong>Tipo:</strong> ${tipo === 'carro' ? 'Carro' : 'Moto'}</p>
-            <p><strong>Modelo:</strong> ${modelo}</p>
-            <p><strong>Entrada:</strong> ${dataEntrada}</p>
-            <p><strong>Valor:</strong> ${valor}</p>
-            <hr>
-            <div class="cupom-footer">Obrigado por escolher nosso estacionamento!</div>
-        `;
-
-        // Exibe área do cupom e botão de imprimir
-        document.getElementById('cupom-area').style.display = 'flex';
-        document.getElementById('btn-imprimir-cupom').style.display = 'inline-block';
-
-        // Opcional: Limpa o formulário
-        this.reset();
-    });
-
-    // Imprime o cupom ao clicar no botão
-    document.getElementById('btn-imprimir-cupom').addEventListener('click', function() {
-        window.print();
-    });
 });
