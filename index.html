@@ -75,5 +75,20 @@
   <div id="novo-dia-content"></div>
 </dialog>
   <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qz-tray/2.1.0/qz-tray.js"></script>
+  <script>
+  function imprimirDiretoCupom() {
+      qz.websocket.connect().then(() => {
+          return qz.printers.find("GS-T80EBT");
+      }).then(printer => {
+          const config = qz.configs.create(printer);
+          const data = [
+              { type: 'raw', format: 'plain', data: document.getElementById('cupom').innerText }
+          ];
+          return qz.print(config, data);
+      }).catch(err => alert("Erro ao imprimir: " + err));
+  }
+  document.getElementById('btn-imprimir-cupom').onclick = imprimirDiretoCupom;
+  </script>
 </body>
 </html>

@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.render();
             this.addEventListeners();
 
-            // Botão imprimir cupom
+            // Botão imprimir cupom com QZ Tray
             const btnImprimir = document.getElementById('btn-imprimir-cupom');
             if (btnImprimir) {
-                btnImprimir.onclick = () => window.print();
+                btnImprimir.onclick = imprimirDiretoCupom;
             }
 
             const btnFecharDia = document.getElementById('btn-fechar-dia');
@@ -349,3 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 });
+
+// Integração com QZ Tray para impressão direta
+function imprimirDiretoCupom() {
+    if (typeof qz === "undefined") {
+        alert("QZ Tray não está carregado. Por favor, instale e inicie o QZ Tray.");
+        return;
+    }
+    qz.websocket.connect().then(() => {
+        return qz.printers.find("GS-T80EBT"); // Substitua pelo nome exato da sua impressora, se necessário
+    }).then(printer => {
+        const config = qz.configs.create(printer);
+        const data = [
+            { type: 'raw', format: 'plain', data: document.getElementById('cupom').innerText }
+        ];
+        return qz.print(config, data);
+    }).catch(err => alert("Erro ao imprimir: " + err));
+}
