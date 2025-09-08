@@ -2,99 +2,56 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Estacionamento</title>
+  <title>Sistema de Estacionamento</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <h2>Erivan Estacionamento</h2>
-      <form id="entry-form">
-        <h3>Registrar Entrada</h3>
-        <div class="input-group">
-          <label for="placa">Placa do Veículo:</label>
-          <input type="text" id="placa" name="placa" required placeholder="AAA-1234" maxlength="8">
+  <header>
+    <h1>Estacionamento - Controle de Vagas</h1>
+    <button id="novo-dia">Novo Dia</button>
+  </header>
+
+  <!-- Seção de Cadastro e Comprovante -->
+  <section class="cadastro">
+    <form id="form-veiculo">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="placa">Placa</label>
+          <input type="text" id="placa" required maxlength="8" autocomplete="off">
         </div>
-        <div class="input-group">
-          <label for="tipo">Tipo de Veículo:</label>
-          <select id="tipo" name="tipo" required>
+        <div class="form-group">
+          <label for="modelo">Modelo</label>
+          <input type="text" id="modelo" required maxlength="20" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo</label>
+          <select id="tipo" required>
             <option value="" disabled selected>Selecione</option>
-            <option value="carro">Carro - R$60,00</option>
-            <option value="moto">Moto - R$30,00</option>
+            <option value="carro">Carro</option>
+            <option value="moto">Moto</option>
           </select>
         </div>
-        <div class="input-group">
-          <label for="modelo">Modelo do Veículo:</label>
-          <input type="text" id="modelo" name="modelo" required placeholder="Ex: Honda Civic">
+        <div class="form-group full-width">
+          <button type="submit" id="btn-cadastrar">Cadastrar Veículo</button>
         </div>
-        <button type="submit">Registrar Check-in</button>
-      </form>
-      <div id="cupom-area" style="display:none;">
-        <div id="cupom"></div>
-        <!--<button id="btn-gerar-cupom" type="button">Gerar Cupom Fiscal</button>-->
-        <button id="btn-imprimir-cupom" type="button" style="display:none;">Imprimir Cupom</button>
       </div>
-      <div class="legend">
-        <h4>Legenda</h4>
-        <div class="legend-item"><span class="spot-color available"></span> Disponível</div>
-        <div class="legend-item"><span class="spot-color occupied"></span> Ocupada</div>
-      </div>
-    </aside>
+    </form>
+    <div id="comprovante" class="hidden"></div>
+  </section>
 
-    <main class="main-content">
-      <div id="fluxo-caixa" class="fluxo-caixa">
-        <h4>Fluxo de Caixa</h4>
-        <div>Carros: <span id="caixa-carro">0</span></div>
-        <div>Motos: <span id="caixa-moto">0</span></div>
-        <div><span id="caixa-total">Total do caixa: R$ 0,00</span></div>
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <!-- <button id="btn-fechar-dia" type="button">Fechar Dia</button> -->
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <button id="btn-novo-dia" type="button">Começar Novo Dia</button>
-      </div>
-      <div id="parking-lot" class="parking-lot-grid">
-        <!-- Vagas serão geradas pelo JavaScript -->
-      </div>
-    </main>
-  </div>
+  <!-- Seção de Dashboard (Vagas e Checkout) -->
+  <section class="dashboard">
+    <h2>Vagas Ocupadas e Disponíveis</h2>
+    <div>
+      <strong>Total de Vagas:</strong> <span id="total-vagas">65</span> |
+      <strong>Ocupadas:</strong> <span id="total-veiculos">0</span> |
+      <strong>Disponíveis:</strong> <span id="vagas-disponiveis">65</span>
+    </div>
+    <ul id="lista-veiculos"></ul>
+    <button id="btn-imprimir-extrato" style="margin-top:20px;">Imprimir Extrato do Dia</button>
+    <div id="extrato-dia" class="hidden"></div>
+  </section>
 
-  <!-- Modal de Checkout -->
-  <dialog id="checkout-modal">
-    <div id="checkout-content"></div>
-  </dialog>
-  <div id="checkin-notification" class="notification" style="display:none;">
-  Check-in realizado com sucesso!
-</div>
-  <dialog id="fechamento-modal">
-  <div id="fechamento-content"></div>
-</dialog>
-  <dialog id="novo-dia-modal">
-  <div id="novo-dia-content"></div>
-</dialog>
   <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qz-tray/2.1.0/qz-tray.js"></script>
-  <script>
-  function imprimirDiretoCupom() {
-      qz.websocket.connect().then(() => {
-          return qz.printers.find("GS-T80EBT");
-      }).then(printer => {
-          const config = qz.configs.create(printer);
-          const data = [
-              { type: 'raw', format: 'plain', data: document.getElementById('cupom').innerText }
-          ];
-          return qz.print(config, data);
-      }).catch(err => alert("Erro ao imprimir: " + err));
-  }
-  document.getElementById('btn-imprimir-cupom').onclick = imprimirDiretoCupom;
-  </script>
-  <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
-</script>
 </body>
 </html>
