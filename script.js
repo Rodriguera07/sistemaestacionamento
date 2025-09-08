@@ -48,7 +48,8 @@ function atualizarDashboard() {
 
 function gerarComprovante(veiculo) {
   comprovante.innerHTML = `
-    <p>Erivan Estacionamento</p>
+    <p style="font-size:1.2rem;font-weight:bold;">Erivan Estacionamento</p>
+    <p style="font-size:0.98rem;">www.erivanestacionamento.com.br</p>
     <hr>
     <p><strong>CNPJ:</strong> 18.852.143/001-97</p>
     <p><strong>Horário de funcionamento:</strong> 8h às 18h</p>
@@ -76,6 +77,39 @@ function darCheckout(index) {
   }
 }
 
+// Função para mostrar notificação visual
+function mostrarNotificacao(mensagem, cor = "#198754") {
+  let notif = document.getElementById('notificacao-cadastro');
+  if (!notif) {
+    notif = document.createElement('div');
+    notif.id = 'notificacao-cadastro';
+    notif.style.position = 'fixed';
+    notif.style.top = '30px';
+    notif.style.left = '50%';
+    notif.style.transform = 'translateX(-50%)';
+    notif.style.background = cor;
+    notif.style.color = '#fff';
+    notif.style.padding = '1rem 2.5rem';
+    notif.style.borderRadius = '8px';
+    notif.style.fontSize = '1.2rem';
+    notif.style.fontWeight = 'bold';
+    notif.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+    notif.style.zIndex = '9999';
+    notif.style.display = 'none';
+    notif.style.transition = 'opacity 0.3s';
+    document.body.appendChild(notif);
+  }
+  notif.textContent = mensagem;
+  notif.style.display = 'block';
+  notif.style.opacity = '1';
+  setTimeout(() => {
+    notif.style.opacity = '0';
+    setTimeout(() => {
+      notif.style.display = 'none';
+    }, 300);
+  }, 1500);
+}
+
 form.addEventListener('submit', function(e) {
   e.preventDefault();
   if (veiculos.length >= LIMITE_VAGAS) {
@@ -97,6 +131,9 @@ form.addEventListener('submit', function(e) {
   gerarComprovante(veiculo);
   atualizarDashboard();
   form.reset();
+
+  // Feedback visual ao cadastrar
+  mostrarNotificacao("Veículo cadastrado com sucesso!");
 });
 
 btnNovoDia.addEventListener('click', function() {
