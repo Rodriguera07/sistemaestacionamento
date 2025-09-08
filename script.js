@@ -48,7 +48,7 @@ function atualizarDashboard() {
 
 function gerarComprovante(veiculo) {
   comprovante.innerHTML = `
-    <p>COMPROVANTE DE ENTRADA</p>
+    <p>Erivan Estacionamento</p>
     <hr>
     <p><strong>CNPJ:</strong> 18.852.143/001-97</p>
     <p><strong>Horário de funcionamento:</strong> 8h às 18h</p>
@@ -59,7 +59,6 @@ function gerarComprovante(veiculo) {
     <p><strong>Data/Hora:</strong> ${veiculo.dataHora}</p>
     <p><strong>Valor:</strong> R$ ${veiculo.valor.toFixed(2)}</p>
     <hr>
-    <p>Guarde este comprovante!</p>
     <button onclick="window.print()">Imprimir Cupom</button>
   `;
   comprovante.classList.remove('hidden');
