@@ -49,7 +49,6 @@ function atualizarDashboard() {
 function gerarComprovante(veiculo) {
   comprovante.innerHTML = `
     <p style="font-size:1.2rem;font-weight:bold;">Erivan Estacionamento</p>
-    <p style="font-size:0.98rem;">www.erivanestacionamento.com.br</p>
     <hr>
     <p><strong>CNPJ:</strong> 18.852.143/001-97</p>
     <p><strong>Horário de funcionamento:</strong> 8h às 18h</p>
